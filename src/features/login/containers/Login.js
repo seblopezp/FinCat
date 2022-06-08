@@ -1,26 +1,23 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import { Box, Center, Container, Heading, Stack, Text, VStack, Input, Flex } from 'native-base';
+import { Box, Center, Container, Heading, Stack, Text, VStack, Input, Flex, FormControl,WarningOutlineIcon } from 'native-base';
 import Styles from '../containers/Styles';
 
 const Login = () => {
   return (
-    <Center bg="purple.500" flex={1} p="1">
-      <Container bg="purple.400" borderRadius="md" w="100%" >
-        <Heading />
-        <Flex  h="50%" alignItems="center" >
-          <Box >
-            <Center size={90} bg="primary.500">
-              <Text bold fontSize="3xl" fontStyle="italic">FinCat</Text>
-            </Center>
-            <Stack >
-              <Input size="lg" variant="rounded" placeholder="lg Input" />
-              <Input size="lg" variant="rounded" placeholder="lg Input" />
-            </Stack>
-          </Box>
-        </Flex>
-      </Container>
-    </Center>
+    <Flex bg="purple.300" flex={1} px="2" >
+        <Center bg="purple.700" mx="43" my="150" flex={2} rounded="xl" >
+            <VStack space={6} >
+                <Text  space="16" fontSize={45} bold>FinCat</Text>
+                <FormControl w="240" maxW="300px">
+                    <FormControl.Label><Text color="white" fontWeight="bold">Usuario</Text></FormControl.Label>
+                    <Input placeholder="Enter User" borderColor="white" bgColor="white"/>
+                    <FormControl.Label><Text color="white" fontWeight="bold">Password</Text></FormControl.Label>
+                    <Input placeholder="Enter password" borderColor="white" bgColor="white"/>
+            </FormControl>
+            </VStack>
+        </Center>
+    </Flex>
   );
 };
 
