@@ -8,7 +8,6 @@ export default function App() {
 
   const theme = extendTheme({
     colors: {
-      // Add new color
       primary: {
         50: '#E3F2F9',
         100: '#C5E4F3',
@@ -21,13 +20,14 @@ export default function App() {
         800: '#005885',
         900: '#003F5E'
       },
-      // Redefinig only one shade, rest of the color will remain same.
       amber: {
         400: '#d97706'
+      },
+      black:{
+        100:'#000'
       }
     },
     config: {
-      // Changing initialColorMode to 'dark'
       initialColorMode: 'dark'
     }
   });
