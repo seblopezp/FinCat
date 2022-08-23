@@ -1,13 +1,17 @@
 import React, {useState} from 'react';
-import {Text, Input, Stack, Button, FormControl} from 'native-base';
+import {Text, Input, Stack, Button, FormControl, Spinner} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome';
-// import {login} from '../services/loginService';
 import PropTypes from 'prop-types';
+import axios from 'axios';
+import endpoints from '../../../constants/endpoints';
+
 export const LoginForm = ({navigation}) => {
+
+  const loginUrl = 'users/login';
   const [show, setShow] = React.useState(false);
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
-  // const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [errortext, setErrortext] = useState(false);
 
   const handleUserInput = UserEmail => {
@@ -30,10 +34,36 @@ export const LoginForm = ({navigation}) => {
   };
 
   const handleSubmitPress = () => {
-    /**  
-    * TODO: se debe implementar llamada al servicio
-    */
-    navigation.navigate('Home');
+    setLoading(true);
+    console.log(userEmail, userPassword);
+    /**
+     * TODO: se debe implementar llamada al servicio
+     * * Esto será refactorizado !!
+     */
+    const options = {
+      method: 'POST',
+      url: `${endpoints.URL_API}${loginUrl}`,
+      data: {
+        email: userEmail,
+        password: userPassword,
+      },
+    };
+
+    axios
+      .request(options)
+      .then(function (response) {
+        navigation.push('Home', {
+          data: response.data,
+        });
+        setLoading(false);
+        console.log(response.data);
+      })
+      .catch(function (error) {
+        setLoading(false);
+        if (error.request.status === 401) {
+          setErrortext('Usuario y/o contraseña incorrectos');
+        }
+      });
   };
 
   return (
@@ -95,11 +125,15 @@ export const LoginForm = ({navigation}) => {
           size="md"
           bold
           mt="4"
-          isDisabled={
-            errortext || !userEmail && !userPassword
-          }
+          isDisabled={errortext || loading || (!userEmail && !userPassword) }
           onPress={() => handleSubmitPress(userEmail, userPassword)}>
-          <Text>Login</Text>
+          <Text>
+            {!loading ? (
+              'Iniciar Sesión'
+            ) : (
+              <Spinner color="primary.50" />
+            )}
+          </Text>
         </Button>
       </FormControl>
     </Stack>
