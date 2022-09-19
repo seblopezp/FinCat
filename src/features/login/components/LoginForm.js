@@ -2,18 +2,16 @@ import React, {useState} from 'react';
 import {Text, Input, Stack, Button, FormControl, Spinner} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import PropTypes from 'prop-types';
-import axios from 'axios';
-import endpoints from '../../../constants/endpoints';
-
+import login from '../services/loginService';
+import errorStr from '../static/errorsStr';
 export const LoginForm = ({navigation}) => {
-
-  const loginUrl = 'users/login';
   const [show, setShow] = React.useState(false);
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errortext, setErrortext] = useState(false);
-
+  const {ERROR_LOGIN} = errorStr;
+  
   const handleUserInput = UserEmail => {
     let reg = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w\w+)+$/;
     if (UserEmail.length === 0) {
@@ -33,37 +31,25 @@ export const LoginForm = ({navigation}) => {
     }
   };
 
-  const handleSubmitPress = () => {
+  const handleSubmitPress = async (userEmail, userPassword) => {
     setLoading(true);
-    console.log(userEmail, userPassword);
-    /**
-     * TODO: se debe implementar llamada al servicio
-     * * Esto será refactorizado !!
-     */
-    const options = {
-      method: 'POST',
-      url: `${endpoints.URL_API}${loginUrl}`,
-      data: {
-        email: userEmail,
-        password: userPassword,
-      },
-    };
-
-    axios
-      .request(options)
-      .then(function (response) {
+    const resp = await login(userEmail, userPassword);
+    const {status} = resp;
+    // *TODO SE DEBE REFACTORIZAR A HELPER
+    switch (status) {
+      case 500:
+      case 403:
+        setErrortext(ERROR_LOGIN[403]);
+        break;
+      case 401:
+        setErrortext(ERROR_LOGIN[401]);
+        break;
+      case 200:
         navigation.push('Home', {
-          data: response.data,
+          data: resp,
         });
-        setLoading(false);
-        console.log(response.data);
-      })
-      .catch(function (error) {
-        setLoading(false);
-        if (error.request.status === 401) {
-          setErrortext('Usuario y/o contraseña incorrectos');
-        }
-      });
+    }
+    setLoading(false);
   };
 
   return (
@@ -125,14 +111,10 @@ export const LoginForm = ({navigation}) => {
           size="md"
           bold
           mt="4"
-          isDisabled={errortext || loading || (!userEmail && !userPassword) }
+          isDisabled={errortext || loading || !userEmail || !userPassword}
           onPress={() => handleSubmitPress(userEmail, userPassword)}>
           <Text>
-            {!loading ? (
-              'Iniciar Sesión'
-            ) : (
-              <Spinner color="primary.50" />
-            )}
+            {!loading ? 'Iniciar Sesión' : <Spinner color="primary.50" />}
           </Text>
         </Button>
       </FormControl>
