@@ -25,6 +25,9 @@ export default function App() {
       },
       black:{
         100:'#000'
+      },
+      red:{
+        100:'#F32013'
       }
     },
     config: {
